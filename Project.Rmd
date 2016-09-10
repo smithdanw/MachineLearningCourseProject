@@ -1,0 +1,117 @@
+---
+title: "Machine Learning - Final Project"
+author: "Dan Smith"
+date: "September 6, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+This is the Peer Graded Course Project for the Practical Machine Learning Course for Coursera in the Data Science Certificate Track.
+
+
+From the Assignment Description:
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).
+
+# Packages
+```{r Load Packages}
+library(plyr)
+library(dplyr)
+library(caret)
+library(rpart)
+library(e1071)
+library(randomForest)
+```
+
+# Read the Data
+```{r Read Data}
+training_data <- read.csv(url("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"), na.strings=c("NA","#DIV/0!",""))
+testing_data <- read.csv(url("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"), na.strings=c("NA","#DIV/0!",""))
+```
+
+# Exploratory Data Analysis
+```{r Basic Data Exploration}
+dim(training_data)
+names(training_data)
+```
+
+# Partition the Data
+```{r Data Partitioning}
+inTrain <- createDataPartition(y=training_data$classe, p=0.7, list=FALSE)
+training_set <- training_data[inTrain, ]; 
+testing_set <- training_data[-inTrain, ]
+dim(training_set) 
+dim(testing_set)
+```
+# Clean the Data
+
+Remove the first column:
+```{r}
+training_set <- training_set[c(-1)]
+```
+
+Choosing to remove columns with too many NAs -- setting the threshold at 70%
+```{r}
+temp_training <- training_set
+for(i in 1:length(training_set)) { 
+        if( sum( is.na( training_set[, i] ) ) /nrow(training_set) >= .7 ) { 
+        for(j in 1:length(temp_training)) {
+            if( length( grep(names(training_set[i]), names(temp_training)[j]) ) ==1)  { 
+                temp_training <- temp_training[ , -j]
+            }   
+        } 
+    }
+}
+
+# Show the new column count after cleaning
+dim(temp_training)
+
+training_set <- temp_training
+my_column_names <- names(temp_training)
+testing_set <- testing_set[my_column_names]
+
+# remove the 'classe' name since that is not in the testing data set
+# as it's the value we're trying to predcit
+my_column_names <- my_column_names[my_column_names != "classe"]
+testing_data <- testing_data[my_column_names]
+```
+
+There is an issue with random forest predictions where the levels have to match. We'll make sure that happens now.
+```{r Factor Matching}
+common <- intersect(names(training_set), names(testing_data)) 
+for (p in common) { 
+  if (class(training_set[[p]]) == "factor") { 
+    levels(testing_data[[p]]) <- levels(training_set[[p]]) 
+  } 
+}
+```
+
+# Create and Evaluate Models
+First Model:
+```{r Model 1 Generations}
+model1 <- rpart(classe ~ ., data=training_set, method="class")
+```
+
+Evaluate Model Predictions
+```{r Model Predicitons}
+prediction1 <- predict(model1, testing_set, type = "class")
+confusionMatrix(prediction1, testing_set$classe)
+```
+
+Model2
+```{r Model 2}
+model2 <- randomForest(classe ~ ., data=training_set, method="class")
+prediction2 <- predict(model2, testing_set, type = "class")
+confusionMatrix(prediction2, testing_set$classe)
+```
+
+Perhaps unsurprisingly, random forests had much better accuracy than decision trees.
+
+# Create Predictions for Test Set To Answer Quiz Problems
+```{r Predict Test Set}
+testing_data_predictions <- predict(model2, testing_data, type = "class")
+testing_data_predictions
+```
