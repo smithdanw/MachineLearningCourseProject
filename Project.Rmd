@@ -90,7 +90,7 @@ for (p in common) {
 ```
 
 # Create and Evaluate Models
-First Model:
+First Model -- built using rpart with all columns to predict classe:
 ```{r Model 1 Generations}
 model1 <- rpart(classe ~ ., data=training_set, method="class")
 ```
@@ -101,14 +101,14 @@ prediction1 <- predict(model1, testing_set, type = "class")
 confusionMatrix(prediction1, testing_set$classe)
 ```
 
-Model2
+Model 2 -- built using random forests using all columns to predict classe:
 ```{r Model 2}
 model2 <- randomForest(classe ~ ., data=training_set, method="class")
 prediction2 <- predict(model2, testing_set, type = "class")
 confusionMatrix(prediction2, testing_set$classe)
 ```
 
-Perhaps unsurprisingly, random forests had much better accuracy than decision trees.
+We expected the error to be lower with random forests and it was.
 
 # Create Predictions for Test Set To Answer Quiz Problems
 ```{r Predict Test Set}

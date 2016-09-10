@@ -298,7 +298,7 @@ for (p in common) {
 </div>
 <div id="create-and-evaluate-models" class="section level1">
 <h1>Create and Evaluate Models</h1>
-<p>First Model:</p>
+<p>First Model – built using rpart with all columns to predict classe:</p>
 <pre class="r"><code>model1 &lt;- rpart(classe ~ ., data=training_set, method=&quot;class&quot;)</code></pre>
 <p>Evaluate Model Predictions</p>
 <pre class="r"><code>prediction1 &lt;- predict(model1, testing_set, type = &quot;class&quot;)
@@ -307,34 +307,34 @@ confusionMatrix(prediction1, testing_set$classe)</code></pre>
 ## 
 ##           Reference
 ## Prediction    A    B    C    D    E
-##          A 1614   46    5    3    0
-##          B   43  957   60   47    0
-##          C   17  131  947   90   46
-##          D    0    5   11  708   55
-##          E    0    0    3  116  981
+##          A 1608   52    6    1    0
+##          B   52  947   60   37    0
+##          C   14  132  941  103   37
+##          D    0    8   14  729   68
+##          E    0    0    5   94  977
 ## 
 ## Overall Statistics
-##                                           
-##                Accuracy : 0.8848          
-##                  95% CI : (0.8764, 0.8928)
-##     No Information Rate : 0.2845          
-##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
-##                                           
-##                   Kappa : 0.8543          
-##  Mcnemar's Test P-Value : NA              
+##                                          
+##                Accuracy : 0.8839         
+##                  95% CI : (0.8755, 0.892)
+##     No Information Rate : 0.2845         
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
+##                                          
+##                   Kappa : 0.8532         
+##  Mcnemar's Test P-Value : NA             
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: A Class: B Class: C Class: D Class: E
-## Sensitivity            0.9642   0.8402   0.9230   0.7344   0.9067
-## Specificity            0.9872   0.9684   0.9416   0.9856   0.9752
-## Pos Pred Value         0.9676   0.8645   0.7693   0.9089   0.8918
-## Neg Pred Value         0.9858   0.9619   0.9830   0.9499   0.9789
+## Sensitivity            0.9606   0.8314   0.9172   0.7562   0.9030
+## Specificity            0.9860   0.9686   0.9411   0.9817   0.9794
+## Pos Pred Value         0.9646   0.8641   0.7669   0.8901   0.9080
+## Neg Pred Value         0.9844   0.9599   0.9818   0.9536   0.9782
 ## Prevalence             0.2845   0.1935   0.1743   0.1638   0.1839
-## Detection Rate         0.2743   0.1626   0.1609   0.1203   0.1667
-## Detection Prevalence   0.2834   0.1881   0.2092   0.1324   0.1869
-## Balanced Accuracy      0.9757   0.9043   0.9323   0.8600   0.9409</code></pre>
-<p>Model2</p>
+## Detection Rate         0.2732   0.1609   0.1599   0.1239   0.1660
+## Detection Prevalence   0.2833   0.1862   0.2085   0.1392   0.1828
+## Balanced Accuracy      0.9733   0.9000   0.9291   0.8690   0.9412</code></pre>
+<p>Model 2 – built using random forests using all columns to predict classe:</p>
 <pre class="r"><code>model2 &lt;- randomForest(classe ~ ., data=training_set, method=&quot;class&quot;)
 prediction2 &lt;- predict(model2, testing_set, type = &quot;class&quot;)
 confusionMatrix(prediction2, testing_set$classe)</code></pre>
@@ -342,34 +342,34 @@ confusionMatrix(prediction2, testing_set$classe)</code></pre>
 ## 
 ##           Reference
 ## Prediction    A    B    C    D    E
-##          A 1674    0    0    0    0
-##          B    0 1139    1    0    0
-##          C    0    0 1025    1    0
-##          D    0    0    0  962    0
-##          E    0    0    0    1 1082
+##          A 1674    1    0    0    0
+##          B    0 1138    0    0    0
+##          C    0    0 1026    1    0
+##          D    0    0    0  962    1
+##          E    0    0    0    1 1081
 ## 
 ## Overall Statistics
 ##                                           
-##                Accuracy : 0.9995          
-##                  95% CI : (0.9985, 0.9999)
+##                Accuracy : 0.9993          
+##                  95% CI : (0.9983, 0.9998)
 ##     No Information Rate : 0.2845          
 ##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
 ##                                           
-##                   Kappa : 0.9994          
+##                   Kappa : 0.9991          
 ##  Mcnemar's Test P-Value : NA              
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: A Class: B Class: C Class: D Class: E
-## Sensitivity            1.0000   1.0000   0.9990   0.9979   1.0000
-## Specificity            1.0000   0.9998   0.9998   1.0000   0.9998
-## Pos Pred Value         1.0000   0.9991   0.9990   1.0000   0.9991
-## Neg Pred Value         1.0000   1.0000   0.9998   0.9996   1.0000
+## Sensitivity            1.0000   0.9991   1.0000   0.9979   0.9991
+## Specificity            0.9998   1.0000   0.9998   0.9998   0.9998
+## Pos Pred Value         0.9994   1.0000   0.9990   0.9990   0.9991
+## Neg Pred Value         1.0000   0.9998   1.0000   0.9996   0.9998
 ## Prevalence             0.2845   0.1935   0.1743   0.1638   0.1839
-## Detection Rate         0.2845   0.1935   0.1742   0.1635   0.1839
-## Detection Prevalence   0.2845   0.1937   0.1743   0.1635   0.1840
-## Balanced Accuracy      1.0000   0.9999   0.9994   0.9990   0.9999</code></pre>
-<p>Perhaps unsurprisingly, random forests had much better accuracy than decision trees.</p>
+## Detection Rate         0.2845   0.1934   0.1743   0.1635   0.1837
+## Detection Prevalence   0.2846   0.1934   0.1745   0.1636   0.1839
+## Balanced Accuracy      0.9999   0.9996   0.9999   0.9989   0.9994</code></pre>
+<p>We expected the error to be lower with random forests and it was.</p>
 </div>
 <div id="create-predictions-for-test-set-to-answer-quiz-problems" class="section level1">
 <h1>Create Predictions for Test Set To Answer Quiz Problems</h1>
